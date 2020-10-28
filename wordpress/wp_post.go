@@ -9,6 +9,7 @@ type Post struct {
 	PostContent
 }
 
+// PostContent 参考：https://developer.wordpress.org/reference/classes/wp_xmlrpc_server/wp_newpost/
 type PostContent struct {
 	PostType      string `xmlrpc:"post_type"`
 	PostStatus    string `xmlrpc:"post_status"`
@@ -63,10 +64,12 @@ func (p Post) GetArgs(user string, pwd string) interface{} {
 	return args
 }
 
-func NewPost(content string, title string, tags []string, cate []string) (p Post) {
+// NewPost 新建一个提交内容
+func NewPost(content, title, postDate string, postAuthor int, tags []string, cate []string) (p Post) {
 	p.PostContent = PostContent{
 		PostType:    `post`,
 		PostStatus:  `publish`,
+		PostAuthor:  postAuthor,
 		PostTitle:   title,
 		PostContent: content,
 		PostDate:    time.Now().Format(`2006-01-02 15:04:05`),
@@ -74,6 +77,9 @@ func NewPost(content string, title string, tags []string, cate []string) (p Post
 			PostCategory: cate,
 			TagsInput:    tags,
 		},
+	}
+	if len(postDate) != 0 {
+		p.PostDate = postDate
 	}
 	return p
 }
